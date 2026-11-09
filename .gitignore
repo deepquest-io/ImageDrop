@@ -1,0 +1,14 @@
+# SwiftPM / Xcode
+.build/
+.swiftpm/
+DerivedData/
+*.xcodeproj/
+xcuserdata/
+
+# Build output
+dist/
+*.app
+ImageDrop-v*-macOS.zip
+
+# macOS
+.DS_Store
