@@ -4,6 +4,12 @@ by deepquest | https://deepquest.code511.com/blog
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org): MAJOR.MINOR.PATCH.
 The current version is in `VERSION`; the build number (`BUILD`) goes up by one with every delivered revision.
 
+## [1.2.3] — 2026-11-09 (build 7)
+### Removed
+- `publish.sh`. It was only needed for the first publish; the repo now lives at https://github.com/deepquest-io/ImageDrop.
+### Changed
+- README project layout updated to match.
+
 ## [1.2.2] — 2026-11-09 (build 6)
 ### Changed
 - First version published on GitHub: https://github.com/deepquest-io/ImageDrop

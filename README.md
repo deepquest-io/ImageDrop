@@ -7,7 +7,7 @@
 
 **A fast, native macOS drag-and-drop image converter, with WebP output tuned for small files at high quality.**
 
-Created by **[deepquest](https://deepquest.code511.com/blog)** · Version 1.2.2 (build 6) · [Changelog](CHANGELOG.md)
+Created by **[deepquest](https://deepquest.code511.com/blog)** · Version 1.2.3 (build 7) · [Changelog](CHANGELOG.md)
 
 Drop one image, many images or whole folders on the window or the Dock icon, and they're converted right away. Several files convert at the same time.
 
@@ -25,7 +25,6 @@ The app isn't notarized by Apple, so the first time you open it macOS will block
 - Or run this in Terminal: `xattr -dr com.apple.quarantine /Applications/ImageDrop.app`
 
 ## Build from source
-
 
 Requirements: macOS 13 or later, plus Xcode or the Command Line Tools (`xcode-select --install`).
 
@@ -80,8 +79,7 @@ Tip: use quality 75–82 for web photos and 85–90 for hero images or photograp
 
 ## Project layout
 ```
-.github/workflows/build.yml     CI: builds every push; publishes a Release for v* tags
-publish.sh                      first-time publish to GitHub (uses the gh CLI)
+.github/workflows/build.yml     CI: builds every push; publishes a Release for each new VERSION
 VERSION / BUILD / CHANGELOG.md  version tracking
 Package.swift                   SwiftPM manifest (depends on libwebp)
 build.sh                        builds and bundles ImageDrop.app
