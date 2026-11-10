@@ -4,6 +4,12 @@ by deepquest | https://deepquest.code511.com/blog
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org): MAJOR.MINOR.PATCH.
 The current version is in `VERSION`; the build number (`BUILD`) goes up by one with every delivered revision.
 
+## [1.2.4] — 2026-11-10 (build 8)
+### Added
+- App screenshot in the README (`docs/screenshot.webp`, 14.7 KB).
+### Changed
+- The build workflow is now in the repo, so every new `VERSION` is built and published to GitHub Releases automatically. v1.2.3 was the first automatic release.
+
 ## [1.2.3] — 2026-11-09 (build 7)
 ### Removed
 - `publish.sh`. It was only needed for the first publish; the repo now lives at https://github.com/deepquest-io/ImageDrop.
