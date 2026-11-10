@@ -4,6 +4,10 @@ by deepquest | https://deepquest.code511.com/blog
 All notable changes are listed here. Versions follow [Semantic Versioning](https://semver.org): MAJOR.MINOR.PATCH.
 The current version is in `VERSION`; the build number (`BUILD`) goes up by one with every delivered revision.
 
+## [1.2.5] — 2026-11-10 (build 9)
+### Added
+- App icon at the top right of the README (`docs/icon.webp`, the same icon that's built into the app).
+
 ## [1.2.4] — 2026-11-10 (build 8)
 ### Added
 - App screenshot in the README (`docs/screenshot.webp`, 14.7 KB).
