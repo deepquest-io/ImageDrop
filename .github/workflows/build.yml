@@ -1,0 +1,89 @@
+# ImageDrop by deepquest | https://deepquest.code511.com/blog
+# Builds on every push/PR. Publishes a GitHub Release for a v* tag, or when
+# main is pushed with a VERSION that hasn't been released yet.
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: ver
+        run: |
+          echo "version=$(tr -d '[:space:]' < VERSION)" >> "$GITHUB_OUTPUT"
+          echo "build=$(tr -d '[:space:]' < BUILD)" >> "$GITHUB_OUTPUT"
+
+      - name: Check tag matches VERSION
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          if [ "${GITHUB_REF_NAME}" != "v${{ steps.ver.outputs.version }}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match VERSION file (${{ steps.ver.outputs.version }})"
+            exit 1
+          fi
+
+      # Release when a v* tag is pushed, or when main is pushed with a VERSION
+      # that has no release yet (so bumping VERSION is enough to ship).
+      - name: Decide whether to release
+        id: rel
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          TAG="v${{ steps.ver.outputs.version }}"
+          RELEASE=false
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            RELEASE=true
+          elif [[ "$GITHUB_EVENT_NAME" == "push" && "$GITHUB_REF" == "refs/heads/main" ]] && ! gh release view "$TAG" >/dev/null 2>&1; then
+            RELEASE=true
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "release=$RELEASE" >> "$GITHUB_OUTPUT"
+          echo "Release $TAG: $RELEASE"
+
+      - name: Build universal app (arm64 + x86_64)
+        run: bash build.sh --universal
+
+      - name: Package
+        run: |
+          ZIP="ImageDrop-v${{ steps.ver.outputs.version }}-macOS.zip"
+          ditto -c -k --sequesterRsrc --keepParent dist/ImageDrop.app "$ZIP"
+          echo "ZIP=$ZIP" >> "$GITHUB_ENV"
+          lipo -info dist/ImageDrop.app/Contents/MacOS/ImageDrop
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ImageDrop-v${{ steps.ver.outputs.version }}-macOS
+          path: ${{ env.ZIP }}
+
+      - name: Release notes from CHANGELOG
+        if: steps.rel.outputs.release == 'true'
+        run: |
+          awk -v v="${{ steps.ver.outputs.version }}" '
+            $0 ~ "^## \\[" v "\\]" {grab=1; next}
+            grab && /^## \[/ {exit}
+            grab {print}
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          printf '\n---\nCreated by **deepquest** | https://deepquest.code511.com/blog\n\nFirst launch: macOS will block the unsigned app. Go to System Settings → Privacy & Security → **Open Anyway**, or run `xattr -dr com.apple.quarantine /Applications/ImageDrop.app`.\n' >> RELEASE_NOTES.md
+          cat RELEASE_NOTES.md
+
+      - name: Publish GitHub Release
+        if: steps.rel.outputs.release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.rel.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: ImageDrop v${{ steps.ver.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          files: ${{ env.ZIP }}
